@@ -1,7 +1,12 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const ShortUrl = require("./models/shortUrl");
+// const fs = require("fs");
 const app = express();
+
+// const myCSS = {
+//   style: fs.readFileSync("./public/assets/styles.scss", "utf8"),
+// };
 
 mongoose.connect("mongodb://localhost/urlShortener", {
   useNewUrlParser: true,
@@ -10,6 +15,7 @@ mongoose.connect("mongodb://localhost/urlShortener", {
 
 app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: false }));
+app.use(express.static("public"));
 
 app.get("/", async (req, res) => {
   const shortUrls = await ShortUrl.find();
@@ -31,6 +37,13 @@ app.get("/:shortUrl", async (req, res) => {
   shortUrl.save();
 
   res.redirect(shortUrl.full);
+});
+
+app.get("/", function (req, res) {
+  res.render("index.ejs", {
+    title: "My Site",
+    myCSS: myCSS,
+  });
 });
 
 app.listen(process.env.PORT || 5000);
